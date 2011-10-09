@@ -1,4 +1,17 @@
 RENDER.run = function() {
+	// shim layer with setTimeout fallback : 
+	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	window.requestAnimFrame = (function(){
+		return  window.requestAnimationFrame       || 
+		window.webkitRequestAnimationFrame || 
+		window.mozRequestAnimationFrame    || 
+		window.oRequestAnimationFrame      || 
+		window.msRequestAnimationFrame     || 
+		function(callback, element) {
+  			window.setTimeout(callback, 66);
+		};
+	})();
+	
 	var ctx;
 	var triangles = [];
 	var thetaZ = 0.0;
@@ -71,6 +84,8 @@ RENDER.run = function() {
 	    if (thetaZ >= 360.0) {
 		    thetaZ = thetaZ - 360.0;
 	    }
+	
+		window.requestAnimFrame(draw);
 	}
 	
 	// Set up the renderer to run.
@@ -93,6 +108,9 @@ RENDER.run = function() {
 	matrixProjection.setRow(3, RENDER.Vector(0.0, 0.0, 0.0, 1.0));
 
 	ctx = document.getElementById("canvas").getContext("2d");
-  	return setInterval(draw, 10);
+	
+  	// return setInterval(draw, 10);
+	window.requestAnimFrame(draw);
+
 	draw();
 }
